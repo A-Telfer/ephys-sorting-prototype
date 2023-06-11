@@ -665,7 +665,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def __init__(self):
         super().__init__()
 
-        self.setWindowTitle("ePhys Signal Filter")
+        self.setWindowTitle("Electrophysiology Sorting Hat")
         view = View()
         self.setCentralWidget(view)
 
