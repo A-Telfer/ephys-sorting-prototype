@@ -1,0 +1,25 @@
+[project]
+name = "ephys_sorting_hat"
+version = "0.0.1"
+authors = [
+  { name="Andre Telfer", email="andretelfer@gmail.com" },
+]
+description = "GUI for sorting patch clamp electrophysiology data"
+readme = "README.md"
+requires-python = ">=3.9"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "pandas>=1.5",
+    "numpy>=1.22",
+    "PyQt6",
+    "pyabf==2.3.7",
+    "matplotlib"
+]
+
+[project.urls]
+"Homepage" = "https://github.com/A-Telfer/ephys-sorting-prototype"
+"Bug Tracker" = "https://github.com/A-Telfer/ephys-sorting-prototype/issues"
