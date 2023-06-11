@@ -7,10 +7,12 @@ import pandas as pd
 
 from ephys_sorting_hat.model import Model, SignalGroup, Sweep
 from matplotlib.figure import Figure
+from PyQt6 import QtGui
 from PyQt6 import QtCore
 from PyQt6 import QtWidgets
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QIntValidator, QDoubleValidator
+from pathlib import Path
 
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg, NavigationToolbar2QT
 # matplotlib.use('Qt5Agg')
@@ -666,7 +668,6 @@ class View(QtWidgets.QWidget):
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self):
         super().__init__()
-
         self.setWindowTitle("Electrophysiology Sorting Hat")
         view = View()
         self.setCentralWidget(view)
@@ -674,6 +675,10 @@ class MainWindow(QtWidgets.QMainWindow):
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
+    icon_path = str(Path(__file__).parent / 'hat-wizard-solid.png')
+    icon = QtGui.QIcon(icon_path)
+    app.setWindowIcon(icon)
+    
     w = MainWindow()
     w.show()
     app.exec()
