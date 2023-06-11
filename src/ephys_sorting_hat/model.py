@@ -32,8 +32,9 @@ class Sweep(QObject):
     @group.setter
     def group(self, value: SignalGroup):
         self._group = value
-        self.sweep_changed.emit()
         self.was_moved_by_user = True
+        self.sweep_changed.emit()
+        print("Emit sweep changed")
 
     def to_dict(self):
         return {

@@ -164,7 +164,7 @@ class GraphWidget(FigureCanvasQTAgg):
         self.line,*_ = self.axes.plot([],[], linewidth=1.0, label="Raw Signal")
         self.smoothed_line,*_ = self.axes.plot([],[], linewidth=1.0, label="Bandpass Signal")
         self.trigger_line,*_ = self.axes.plot([],[], linewidth=1.5, color='red', linestyle='dashed', label="Bandpass Trigger")
-        self.axes.legend()
+        self.axes.legend(loc='upper right')
         self.axes.grid()
         super().__init__(self.fig)
         self.setContentsMargins(0,0,0,0)
@@ -465,7 +465,7 @@ class SignalListView(QtWidgets.QHBoxLayout):
     def update_sweeps(self, sweeps):
         self.noise_list.clear()
         self.signal_list.clear()
-
+        # print("update sweeps")
         for sweep in sweeps:
             sweep_item = SignalListWidgetItem(sweep)
             if sweep.group == SignalGroup.ACTIVITY:
@@ -480,7 +480,7 @@ class SignalListView(QtWidgets.QHBoxLayout):
         item = self.noise_list.currentItem()
         if item is not None:
             sweep = item.sweep
-            print("Item changed", sweep.number)
+            # print("Item changed", sweep.number)
             self.sweep_changed_event.emit(sweep)
 
 
@@ -491,7 +491,7 @@ class SignalListView(QtWidgets.QHBoxLayout):
         item = self.signal_list.currentItem()
         if item is not None:
             sweep = item.sweep
-            print("Item changed", sweep.number)
+            # print("Item changed", sweep.number)
             self.sweep_changed_event.emit(sweep)
 
     def on_key_pressed_from_signal_list(self, event):
@@ -500,7 +500,8 @@ class SignalListView(QtWidgets.QHBoxLayout):
             row = self.signal_list.currentRow()
             sweep = self.signal_list.currentItem().sweep
 
-            if event.key() == Qt.Key_Right:
+            if event.key() == Qt.Key.Key_Right:
+                # print("Move to noise")
                 sweep.group = SignalGroup.NOISE
 
                 # In the other list, set the row to active
@@ -525,7 +526,8 @@ class SignalListView(QtWidgets.QHBoxLayout):
             row = self.noise_list.currentRow()
             sweep = self.noise_list.currentItem().sweep
 
-            if event.key() == Qt.Key_Left:
+            if event.key() == Qt.Key.Key_Left:
+                # print("move to signal")
                 sweep.group = SignalGroup.ACTIVITY
 
                 # In the other list, set the row to active
