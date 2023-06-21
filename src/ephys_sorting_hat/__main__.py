@@ -39,7 +39,7 @@ class LoadFileLayout(QtWidgets.QHBoxLayout):
 
     def __init__(self):
         super().__init__()
-        label = QtWidgets.QLabel("Open .abf File")
+        label = QtWidgets.QLabel("Open .abf or .pkl File")
         # label.setFixedWidth(LOAD_LABEL_WIDTH)
         label.setAlignment(Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter)
 
@@ -69,7 +69,7 @@ class LoadFileLayout(QtWidgets.QHBoxLayout):
         
     def on_browse(self, event):
         dialog = QtWidgets.QFileDialog()
-        filepath, _ = dialog.getOpenFileName(None, "Load .abf file", filter="abf files (*.abf)")
+        filepath, _ = dialog.getOpenFileName(None, "Load .abf or .pkl file", filter="abf or pkl files (*.abf *.pkl)")
         if filepath:
             self.load_file_input.setText(filepath)
 
@@ -606,9 +606,9 @@ class View(QtWidgets.QWidget):
         
     def load(self):
         try:
-            self.model.load_abf_file(self.load_file_layout.value)
+            self.model.load_file(self.load_file_layout.value)
         except:
-            QtWidgets.QMessageBox.about(self,'Error',"Invalid .abf file path")
+            QtWidgets.QMessageBox.about(self,'Error',"Invalid file path")
 
     def save(self):
         if self.save_file_widget.value is not None:

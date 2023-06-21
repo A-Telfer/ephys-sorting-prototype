@@ -47,6 +47,19 @@ class Sweep(QObject):
             'label': str(self.label)
         }
 
+    @staticmethod
+    def from_dict(**kwargs):
+        sweep = Sweep(
+            number = int(kwargs['sweep_number']),
+            data = np.array(kwargs['data']),
+            group = SignalGroup(kwargs['group']),
+            sample_rate = int(kwargs['sample_rate'])
+        )
+        print(SignalGroup(kwargs['group']))
+        sweep.was_moved_by_user = True
+        return sweep
+    
+
 class Model(QObject):
     on_sweeps_changed = QtCore.pyqtSignal(list)
     on_signal_detect_complete = QtCore.pyqtSignal()
@@ -105,23 +118,41 @@ class Model(QObject):
         self.active_sweep.group = value
         self.on_sweeps_changed.emit(self.sweeps)
 
-    def load_abf_file(self, filepath):
+    def load_file(self, filepath):
         self._file_location = filepath
         self.sweeps = []
-        abf = pyabf.ABF(self._file_location)
-        self.sample_rate = abf.sampleRate
 
-        for sweep_number in abf.sweepList:
-            abf.setSweep(sweep_number)
-            data = abf.sweepY
-            sweep = Sweep(sweep_number, data, sample_rate=self.sample_rate)
-            sweep.sweep_changed.connect(lambda: self.on_sweeps_changed.emit(self.sweeps))
-            self.sweeps.append(sweep)
+        filename, ext = Path(filepath).parts[-1].split('.')
+        if ext.lower() == 'abf':
+            abf = pyabf.ABF(self._file_location)
+            self.sample_rate = abf.sampleRate
 
-            # Emit event here to show that items are loading
-            self.on_sweeps_changed.emit(self.sweeps)
+            for sweep_number in abf.sweepList:
+                abf.setSweep(sweep_number)
+                data = abf.sweepY
+                sweep = Sweep(sweep_number, data, sample_rate=self.sample_rate)
+                sweep.sweep_changed.connect(lambda: self.on_sweeps_changed.emit(self.sweeps))
+                self.sweeps.append(sweep)
 
-        self.on_load_complete.emit()
+                # Emit event here to show that items are loading
+                self.on_sweeps_changed.emit(self.sweeps)
+
+            self.on_load_complete.emit()
+
+        elif ext.lower() == 'pkl':
+            with open(filepath, 'rb') as fp:
+                data = pickle.load(fp)
+
+            self.sample_rate = data['meta']['sample_rate']
+            for sweep_data in data['data']:
+                sweep = Sweep.from_dict(**sweep_data)
+                sweep.sweep_changed.connect(lambda: self.on_sweeps_changed.emit(self.sweeps))
+                self.sweeps.append(sweep)
+                self.on_sweeps_changed.emit(self.sweeps)
+
+            self.on_load_complete.emit()
+        else:
+            raise Exception(f"Could not recognize filetype '{ext}'")
 
     def low_pass_filter(self, data):
         bandlimit_index = int(self.bandlimit * data.size / self.sample_rate)
